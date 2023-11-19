@@ -12,12 +12,22 @@ class WaveTail:
         self.strength = 5.
         self.offset = 5.
         self.base_offset = 0.
+
+        self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
+
         cmds.columnLayout()
-        cmds.floatSliderGrp(label="Frequency",field=True,minValue=0.0,maxValue=10.0,value=5., dragCommand = lambda _ : (self.set_frequency(_), self.rotate()))
-        cmds.floatSliderGrp(label="Strength",field=True,minValue=0.0,maxValue=10.0,value=5., dragCommand=lambda _ : (self.set_strength(_), self.rotate()))
-        cmds.floatSliderGrp(label="Offset",field=True,minValue=0.0,maxValue=10.0,value=5., dragCommand=lambda _ : (self.set_offset(_), self.rotate()))
-        cmds.floatSliderGrp(label="Base Offset",field=True,minValue=-2.,maxValue=2.,value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.rotate()))
+        cmds.floatSliderGrp(label="Frequency", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_frequency(_), self.rotate()))
+        cmds.floatSliderGrp(label="Strength", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_strength(_), self.rotate()))
+        cmds.floatSliderGrp(label="Offset", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_offset(_), self.rotate()))
+        cmds.floatSliderGrp(label="Base Offset", field=True, minValue=-2., maxValue=2., value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.rotate()))
+        cmds.radioButtonGrp(labelArray3=['x', 'y', 'z'], numberOfRadioButtons=3, sl=1,
+                            onCommand1=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)),
+                            onCommand2=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)),
+                            onCommand3=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj))),
+
         cmds.showWindow(self.win)
+
+    def set_rotate_function(self, f): self.rotate_f = f
 
     def set_offset(self, offset): self.offset = offset
 
@@ -33,11 +43,11 @@ class WaveTail:
 
         first, tail = selected_objs[0], selected_objs[1:]
         r = self.base_offset * self.strength * 10.
-        cmds.rotate(0, r, 0, first)
+        self.rotate_f(r, first)
 
         for i, obj in enumerate(tail):
             r = math.sin((i + 1) / l * self.frequency + self.offset * 1) * self.strength * 5.
             print ("test" + str(i / l) + "| r = " + str(r))
-            cmds.rotate(0, r, 0, obj)
+            self.rotate_f(r, obj)
 
 WaveTail()

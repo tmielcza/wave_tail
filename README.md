@@ -10,13 +10,16 @@ Copy wave_tail.py text in Maya Python Script Editor and run, or select text then
 Use the sliders to make a nice shape.
 
 ## Ideas
-- [ ] Sort button : reorganize controllers selection if not hierarchically sorted.
-- [ ] Select from base : select all controllers down an FK base.
+- [x] Add x, y and z checkboxes to choose rotation axis
+- [ ] Sort button : reorganize controllers selection if not hierarchically sorted
+- [ ] Select from base : select all controllers down an FK base
 - [ ] Installation script
 - [ ] Qt UI
 - [ ] Localization
 - [ ] Animation keys functions
 - [ ] Try to turn it into a plugin
+- [ ] Add comments and useful documentation
+- [ ] Error handling
 
 ## License
 The MIT License 2020 - Tom Mielczarek
