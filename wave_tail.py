@@ -53,17 +53,10 @@ class WaveTail:
     def sort_controllers(self):
         selected_objs = cmds.ls(sl=True, long=True)
         objs_children = {}
-        new_order = []
         for o in selected_objs:
             objs_children[o] = cmds.listRelatives(cmds.listRelatives(o, p=True)[0], f=True, ad=True)
-        for o in selected_objs:
-            i = 0
-            for n in new_order:
-                if o not in objs_children[n]:
-                    break
-                i += 1
-            new_order.insert(i, o)
+        selected_objs.sort(key=lambda a : len(objs_children[a]))
         cmds.select(clear=True)
-        cmds.select(new_order)
+        cmds.select(selected_objs)
 
 WaveTail()
