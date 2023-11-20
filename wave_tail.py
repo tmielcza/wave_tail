@@ -54,8 +54,8 @@ class WaveTail:
         selected_objs = cmds.ls(sl=True, long=True)
         objs_children = {}
         for o in selected_objs:
-            objs_children[o] = cmds.listRelatives(cmds.listRelatives(o, p=True)[0], f=True, ad=True)
-        selected_objs.sort(key=lambda a : len(objs_children[a]))
+            objs_children[o] = cmds.listRelatives(cmds.listRelatives(o, p=True)[0], ad=True)
+        selected_objs.sort(key=lambda a : len(objs_children[a]), reverse=True)
         cmds.select(clear=True)
         cmds.select(selected_objs)
 
