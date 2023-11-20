@@ -11,7 +11,7 @@ Use the sliders to make a nice shape.
 
 ## Ideas
 - [x] Add x, y and z checkboxes to choose rotation axis
-- [ ] Sort button : reorganize controllers selection if not hierarchically sorted
+- [x] Sort button : reorganize controllers selection if not hierarchically sorted
 - [ ] Select from base : select all controllers down an FK base
 - [ ] Installation script
 - [ ] Qt UI

@@ -24,6 +24,7 @@ class WaveTail:
                             onCommand1=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)),
                             onCommand2=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)),
                             onCommand3=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj))),
+        cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
 
         cmds.showWindow(self.win)
 
@@ -47,7 +48,22 @@ class WaveTail:
 
         for i, obj in enumerate(tail):
             r = math.sin((i + 1) / l * self.frequency + self.offset * 1) * self.strength * 5.
-            print ("test" + str(i / l) + "| r = " + str(r))
             self.rotate_f(r, obj)
+
+    def sort_controllers(self):
+        selected_objs = cmds.ls(sl=True, long=True)
+        objs_children = {}
+        new_order = []
+        for o in selected_objs:
+            objs_children[o] = cmds.listRelatives(cmds.listRelatives(o, p=True)[0], f=True, ad=True)
+        for o in selected_objs:
+            i = 0
+            for n in new_order:
+                if o not in objs_children[n]:
+                    break
+                i += 1
+            new_order.insert(i, o)
+        cmds.select(clear=True)
+        cmds.select(new_order)
 
 WaveTail()
