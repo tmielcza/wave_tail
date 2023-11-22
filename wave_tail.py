@@ -16,14 +16,14 @@ class WaveTail:
         self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
 
         cmds.columnLayout()
-        cmds.floatSliderGrp(label="Frequency", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_frequency(_), self.rotate()))
-        cmds.floatSliderGrp(label="Strength", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_strength(_), self.rotate()))
-        cmds.floatSliderGrp(label="Offset", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_offset(_), self.rotate()))
-        cmds.floatSliderGrp(label="Base Offset", field=True, minValue=-2., maxValue=2., value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.rotate()))
-        cmds.radioButtonGrp(labelArray3=['x', 'y', 'z'], numberOfRadioButtons=3, sl=1,
-                            onCommand1=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)),
-                            onCommand2=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)),
-                            onCommand3=lambda _ : self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj))),
+        cmds.floatSliderGrp(label="Frequency", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_frequency(_), self.rotate()), changeCommand=lambda _ : (self.set_frequency(_), self.rotate()))
+        cmds.floatSliderGrp(label="Strength", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_strength(_), self.rotate()), changeCommand=lambda _ : (self.set_strength(_), self.rotate()))
+        cmds.floatSliderGrp(label="Offset", field=True, minValue=0.0, maxValue=10.0, value=5., dragCommand=lambda _ : (self.set_offset(_), self.rotate()), changeCommand=lambda _ : (self.set_offset(_), self.rotate()))
+        cmds.floatSliderGrp(label="Base Offset", field=True, minValue=-2., maxValue=2., value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.rotate()), changeCommand=lambda _ : (self.set_base_offset(_), self.rotate()))
+        cmds.radioButtonGrp(labelArray3=["X", "Y", "Z"], numberOfRadioButtons=3, sl=1,
+                            onCommand1=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)), self.rotate()),
+                            onCommand2=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)), self.rotate()),
+                            onCommand3=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj)), self.rotate())),
         cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
 
         cmds.showWindow(self.win)
