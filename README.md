@@ -20,6 +20,11 @@ Use the sliders to make a nice shape.
 - [ ] Try to turn it into a plugin
 - [ ] Add comments and useful documentation
 - [ ] Error handling
+- [ ] Infer parameters from controllers
+- [ ] More precise and useful parameters
+- [ ] Mirroring
+- [ ] Save parameters
+- [ ] Make a real README with pictures and gifs
 
 ## License
 The MIT License 2020 - Tom Mielczarek
