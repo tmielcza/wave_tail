@@ -12,6 +12,7 @@ Use the sliders to make a nice shape.
 ## Ideas
 - [x] Add x, y and z checkboxes to choose rotation axis
 - [x] Sort button : reorganize controllers selection if not hierarchically sorted
+- [x] Mirroring
 - [ ] Select from base : select all controllers down an FK base
 - [ ] Installation script
 - [ ] Qt UI
@@ -22,7 +23,6 @@ Use the sliders to make a nice shape.
 - [ ] Error handling
 - [ ] Infer parameters from controllers
 - [ ] More precise and useful parameters
-- [ ] Mirroring
 - [ ] Save parameters
 - [ ] Make a real README with pictures and gifs
 
