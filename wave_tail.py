@@ -4,6 +4,7 @@ import math
 MIN_OFFSET = -math.pi
 MAX_OFFSET = math.pi
 
+# Unused
 def start():
     WaveTail()
 
@@ -19,16 +20,16 @@ class WaveTail:
         self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
 
         cmds.columnLayout()
-        self.frequency_slider_id = cmds.floatSliderGrp(label="Frequency", field=True, minValue=-0., maxValue=10., value=0., dragCommand=lambda _ : (self.set_frequency(_), self.rotate()), changeCommand=lambda _ : (self.set_frequency(_), self.rotate()))
-        self.strength_slider_id = cmds.floatSliderGrp(label="Strength", field=True, minValue=0., maxValue=10., value=5., dragCommand=lambda _ : (self.set_strength(_), self.rotate()), changeCommand=lambda _ : (self.set_strength(_), self.rotate()))
-        self.offset_slider_id = cmds.floatSliderGrp(label="Offset", field=True, minValue=MIN_OFFSET, maxValue=MAX_OFFSET, value=MAX_OFFSET / 2., dragCommand=lambda _ : (self.set_offset(_), self.rotate()), changeCommand=lambda _ : (self.set_offset(_), self.rotate()))
-        self.base_offset_slider_id = cmds.floatSliderGrp(label="Base Offset", field=True, minValue=-2., maxValue=2., value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.rotate()), changeCommand=lambda _ : (self.set_base_offset(_), self.rotate()))
+        self.frequency_slider_id = cmds.floatSliderGrp(label="Frequency", field=True, minValue=-0., maxValue=10., value=0., dragCommand=lambda _ : (self.set_frequency(_), self.update_selection()), changeCommand=lambda _ : (self.set_frequency(_), self.update_selection()))
+        self.strength_slider_id = cmds.floatSliderGrp(label="Strength", field=True, minValue=0., maxValue=10., value=5., dragCommand=lambda _ : (self.set_strength(_), self.update_selection()), changeCommand=lambda _ : (self.set_strength(_), self.update_selection()))
+        self.offset_slider_id = cmds.floatSliderGrp(label="Offset", field=True, minValue=MIN_OFFSET, maxValue=MAX_OFFSET, value=MAX_OFFSET / 2., dragCommand=lambda _ : (self.set_offset(_), self.update_selection()), changeCommand=lambda _ : (self.set_offset(_), self.update_selection()))
+        self.base_offset_slider_id = cmds.floatSliderGrp(label="Base Offset", field=True, minValue=-2., maxValue=2., value=0., dragCommand=lambda _ : (self.set_base_offset(_), self.update_selection()), changeCommand=lambda _ : (self.set_base_offset(_), self.update_selection()))
         self.axis_buttons_id = cmds.radioButtonGrp(labelArray3=["X", "Y", "Z"], numberOfRadioButtons=3, sl=1,
-                                                   onCommand1=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)), self.rotate()),
-                                                   onCommand2=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)), self.rotate()),
-                                                   onCommand3=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj)), self.rotate()))
+                                                   onCommand1=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)), self.update_selection()),
+                                                   onCommand2=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)), self.update_selection()),
+                                                   onCommand3=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj)), self.update_selection()))
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
-        self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.rotate()))
+        self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
 
         cmds.showWindow(self.win)
 
@@ -42,7 +43,11 @@ class WaveTail:
 
     def set_base_offset(self, offset): self.base_offset = offset
 
-    def rotate(self):
+    def update_selection(self):
+        """
+        Rotates every selected object according to UI options, drawing a shape from the FK chain
+        """
+
         selected_objs = cmds.ls(sl=True, long=True)
         l = len(selected_objs)
 
@@ -55,6 +60,10 @@ class WaveTail:
             self.rotate_f(r, obj)
 
     def sort_controllers(self):
+        """
+        Sorts selected Maya objects from top hierarchy to bottom
+        """
+
         selected_objs = cmds.ls(sl=True, long=True)
         objs_children = {}
         for o in selected_objs:
@@ -64,6 +73,10 @@ class WaveTail:
         cmds.select(selected_objs)
 
     def mirror_axis(self):
+        """
+        Mirrors the FK tail shape
+        """
+
         new_offset = (self.offset + math.pi - MIN_OFFSET) % (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET
         cmds.floatSliderGrp(self.offset_slider_id, edit=True, value=new_offset)
         self.offset = new_offset
