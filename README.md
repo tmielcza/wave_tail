@@ -13,6 +13,7 @@ Use the sliders to make a nice shape.
 - [x] Add x, y and z checkboxes to choose rotation axis
 - [x] Sort button : reorganize controllers selection if not hierarchically sorted
 - [x] Mirroring
+- [ ] Better UI Layout
 - [ ] Select from base : select all controllers down an FK base
 - [ ] Installation script
 - [ ] Qt UI
@@ -25,6 +26,7 @@ Use the sliders to make a nice shape.
 - [ ] More precise and useful parameters
 - [ ] Save parameters
 - [ ] Make a real README with pictures and gifs
+- [ ] Make a `stable` branch, wrap up a 1.0 version and push it with a `tag` !
 
 ## License
 The MIT License 2020 - Tom Mielczarek
