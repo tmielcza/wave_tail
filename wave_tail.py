@@ -28,7 +28,6 @@ class WaveTail:
                                                    onCommand1=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(a, 0, 0, obj)), self.update_selection()),
                                                    onCommand2=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, a, 0, obj)), self.update_selection()),
                                                    onCommand3=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj)), self.update_selection()))
-  #      cmds.rowLayout()
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
         self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
 
@@ -50,6 +49,10 @@ class WaveTail:
         """
 
         selected_objs = cmds.ls(sl=True, long=True)
+
+        if not selected_objs:
+            return
+
         l = len(selected_objs)
 
         first, tail = selected_objs[0], selected_objs[1:]
@@ -66,6 +69,10 @@ class WaveTail:
         """
 
         selected_objs = cmds.ls(sl=True, long=True)
+
+        if not selected_objs:
+            return
+
         objs_children = {}
         for o in selected_objs:
             objs_children[o] = cmds.listRelatives(cmds.listRelatives(o, p=True)[0], ad=True)
