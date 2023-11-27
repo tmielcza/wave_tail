@@ -92,4 +92,3 @@ class WaveTail:
         cmds.floatSliderGrp(self.base_offset_slider_id, edit=True, value=new_base_offset)
         self.base_offset = new_base_offset
 
-WaveTail()
