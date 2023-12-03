@@ -40,6 +40,7 @@ Use the sliders to make a nice shape.
 - [ ] More precise and useful parameters
 - [ ] Save parameters
 - [ ] Make an installation drag and drop
+- [ ] Create a lib for UI instancing
 
 ## License
 The MIT License 2020 - Tom Mielczarek

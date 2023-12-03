@@ -4,14 +4,51 @@ import math
 MIN_OFFSET = -math.pi
 MAX_OFFSET = math.pi
 
-# Unused
+
 def start():
     WaveTail()
+
+class Params:
+    def __init__(self, freq, stg, off, b_off):
+        self.freq = freq
+        self.stg = stg
+        self.off = off
+        self.b_off = b_off
+
+class UiArray:
+    def __init__(self, elem_class, ui_root):
+        self.elem = elem_class
+        self.root = ui_root
+        self.elems = {}
+
+    def new_element(self, name, *arg, **kwargs):
+        if name not in self.elems:
+            cmds.setParent(self.root)
+            new_elem = self.elem(name, self.delete_element, *arg, **kwargs)
+            self.elems[name] = new_elem
+
+    def delete_element(self, name):
+        del self.elems[name]
+
+
+class ParamsButton:
+    def __init__(self, name, close_callback, apply_callback):
+        self.name = name
+        self.apply_callback = apply_callback
+        self.id = cmds.rowLayout(numberOfColumns=2)
+        cmds.button(name, command=apply_callback, w=50)
+        cmds.iconTextButton(style="iconOnly", image="trash.png", command=lambda: self.delete())
+        self.close_callback = close_callback
+
+    def delete(self):
+        cmds.deleteUI(self.id)
+        self.close_callback(self.name)
+
 
 class WaveTail:
 
     def __init__(self):
-        self.win = cmds.window(title="Wave Tail", widthHeight=(320,170), sizeable=False)
+        self.win = cmds.window(title="Wave Tail", widthHeight=(500, 170), sizeable=False)
         self.frequency = 5.
         self.strength = 5.
         self.offset = 5.
@@ -19,6 +56,8 @@ class WaveTail:
 
         self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
 
+        layout = cmds.paneLayout(configuration='vertical2')
+        # Left column
         cmds.columnLayout()
         self.frequency_slider_id = cmds.floatSliderGrp(label="Frequency", cw=[1, 60], field=True, minValue=-0., maxValue=10., value=0., dragCommand=lambda _ : (self.set_frequency(_), self.update_selection()), changeCommand=lambda _ : (self.set_frequency(_), self.update_selection()))
         self.strength_slider_id = cmds.floatSliderGrp(label="Strength", cw=[1, 60], field=True, minValue=0., maxValue=10., value=5., dragCommand=lambda _ : (self.set_strength(_), self.update_selection()), changeCommand=lambda _ : (self.set_strength(_), self.update_selection()))
@@ -31,7 +70,50 @@ class WaveTail:
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
         self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
 
+        # Right column
+        cmds.setParent(layout)
+        ccl = cmds.columnLayout(adjustableColumn=1)
+        cmds.rowLayout(nc=3)
+        self.new_button_id = cmds.button("NEW")
+        self.text = cmds.textField(width=100)
+
+        cmds.setParent(ccl)
+        cmds.frameLayout(borderVisible=1, labelVisible=0, h=130)
+        scroll = cmds.scrollLayout(cr=1)
+        params_root = cmds.columnLayout()
+        self.saved_params = UiArray(ParamsButton, params_root)
+
+        cmds.button(self.new_button_id, e=1, command=lambda _: self.new_params_template())
+
         cmds.showWindow(self.win)
+
+    def new_params_template(self):
+        params = Params(self.frequency, self.strength, self.offset, self.base_offset)
+        self.saved_params.new_element(cmds.textField(self.text, text=1, q=1),
+                                      lambda _: self.set_params(params))
+
+    def set_params(self, p):
+        self.update_frequency(p.freq)
+        self.update_strength(p.stg)
+        self.update_offset(p.off)
+        self.update_base_offset(p.b_off)
+        self.update_selection()
+
+    def update_offset(self, o):
+        cmds.floatSliderGrp(self.offset_slider_id, edit=True, value=o)
+        self.offset = o
+
+    def update_frequency(self, o):
+        cmds.floatSliderGrp(self.frequency_slider_id, edit=True, value=o)
+        self.frequency = o
+
+    def update_strength(self, o):
+        cmds.floatSliderGrp(self.strength_slider_id, edit=True, value=o)
+        self.strength = o
+
+    def update_base_offset(self, o):
+        cmds.floatSliderGrp(self.base_offset_slider_id, edit=True, value=o)
+        self.base_offset = o
 
     def set_rotate_function(self, f): self.rotate_f = f
 
@@ -86,9 +168,9 @@ class WaveTail:
         """
 
         new_offset = (self.offset + math.pi - MIN_OFFSET) % (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET
-        cmds.floatSliderGrp(self.offset_slider_id, edit=True, value=new_offset)
-        self.offset = new_offset
+        self.update_offset(new_offset)
         new_base_offset = -self.base_offset
-        cmds.floatSliderGrp(self.base_offset_slider_id, edit=True, value=new_base_offset)
-        self.base_offset = new_base_offset
+        self.update_base_offset(new_base_offset)
 
+
+WaveTail()
