@@ -60,13 +60,19 @@ class WaveTail:
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
         self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
 
-        cmds.setParent(layout)
+        saved_column = cmds.setParent(layout)
+        ccl = cmds.columnLayout()
+        cmds.rowLayout(nc=3)
+        self.new_button_id = cmds.button("NEW")
+        text = cmds.textField("template_name", width=50)
+
+        cmds.setParent(ccl)
         scroll = cmds.scrollLayout()
         params_root = cmds.columnLayout()
         saved_params = UiArray(ParamsButton, params_root)
-        for i in range(1,15):
-            saved_params.new_element("Caca" + str(i))
-        cmds.button("Test")
+
+        cmds.setParent(saved_column)
+        cmds.button(self.new_button_id, e=1, command=(lambda _ : saved_params.new_element(cmds.textField(text, text=1, q=1))))
 
         cmds.showWindow(self.win)
 
