@@ -48,6 +48,7 @@ class WaveTail:
         self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
 
         layout = cmds.paneLayout(configuration='vertical2')
+        # Left column
         cmds.columnLayout()
         self.frequency_slider_id = cmds.floatSliderGrp(label="Frequency", cw=[1, 60], field=True, minValue=-0., maxValue=10., value=0., dragCommand=lambda _ : (self.set_frequency(_), self.update_selection()), changeCommand=lambda _ : (self.set_frequency(_), self.update_selection()))
         self.strength_slider_id = cmds.floatSliderGrp(label="Strength", cw=[1, 60], field=True, minValue=0., maxValue=10., value=5., dragCommand=lambda _ : (self.set_strength(_), self.update_selection()), changeCommand=lambda _ : (self.set_strength(_), self.update_selection()))
@@ -60,18 +61,19 @@ class WaveTail:
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
         self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
 
-        saved_column = cmds.setParent(layout)
-        ccl = cmds.columnLayout()
+        # Right column
+        cmds.setParent(layout)
+        ccl = cmds.columnLayout(adjustableColumn=1)
         cmds.rowLayout(nc=3)
         self.new_button_id = cmds.button("NEW")
-        text = cmds.textField("template_name", width=50)
+        text = cmds.textField(width=100)
 
         cmds.setParent(ccl)
-        scroll = cmds.scrollLayout()
+        cmds.frameLayout(borderVisible=1, labelVisible=0, h=130)
+        scroll = cmds.scrollLayout(cr=1)
         params_root = cmds.columnLayout()
         saved_params = UiArray(ParamsButton, params_root)
 
-        cmds.setParent(saved_column)
         cmds.button(self.new_button_id, e=1, command=(lambda _ : saved_params.new_element(cmds.textField(text, text=1, q=1))))
 
         cmds.showWindow(self.win)
