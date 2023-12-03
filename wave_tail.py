@@ -4,14 +4,42 @@ import math
 MIN_OFFSET = -math.pi
 MAX_OFFSET = math.pi
 
-# Unused
+
 def start():
     WaveTail()
+
+
+class UiArray:
+    def __init__(self, elem_class, ui_root):
+        self.elem = elem_class
+        self.root = ui_root
+        self.elems = {}
+
+    def new_element(self, name, *arg, **kwargs):
+        if name not in self.elems:
+            cmds.setParent(self.root)
+            new_elem = self.elem(name, self.delete_element, *arg, **kwargs)
+            self.elems[name] = new_elem
+
+    def delete_element(self, name):
+        del self.elems[name]
+
+
+class ParamsButton:
+    def __init__(self, name, close_callback):
+        self.name = name
+        self.id = cmds.button(name, command=lambda _ : self.delete())
+        self.close_callback = close_callback
+
+    def delete(self):
+        cmds.deleteUI(self.id)
+        self.close_callback(self.name)
+
 
 class WaveTail:
 
     def __init__(self):
-        self.win = cmds.window(title="Wave Tail", widthHeight=(320,170), sizeable=False)
+        self.win = cmds.window(title="Wave Tail", widthHeight=(500, 170), sizeable=False)
         self.frequency = 5.
         self.strength = 5.
         self.offset = 5.
@@ -19,6 +47,7 @@ class WaveTail:
 
         self.rotate_f = lambda a, obj : cmds.rotate(a, 0, 0, obj)
 
+        layout = cmds.paneLayout(configuration='vertical2')
         cmds.columnLayout()
         self.frequency_slider_id = cmds.floatSliderGrp(label="Frequency", cw=[1, 60], field=True, minValue=-0., maxValue=10., value=0., dragCommand=lambda _ : (self.set_frequency(_), self.update_selection()), changeCommand=lambda _ : (self.set_frequency(_), self.update_selection()))
         self.strength_slider_id = cmds.floatSliderGrp(label="Strength", cw=[1, 60], field=True, minValue=0., maxValue=10., value=5., dragCommand=lambda _ : (self.set_strength(_), self.update_selection()), changeCommand=lambda _ : (self.set_strength(_), self.update_selection()))
@@ -30,6 +59,14 @@ class WaveTail:
                                                    onCommand3=lambda _ : (self.set_rotate_function(lambda a, obj : cmds.rotate(0, 0, a, obj)), self.update_selection()))
         self.sort_button_id = cmds.button("Sort Controllers", align="center", command=lambda _ : self.sort_controllers())
         self.mirror_button_id = cmds.button("Mirror", align="center", command=lambda _ : (self.mirror_axis(), self.update_selection()))
+
+        cmds.setParent(layout)
+        scroll = cmds.scrollLayout()
+        params_root = cmds.columnLayout()
+        saved_params = UiArray(ParamsButton, params_root)
+        for i in range(1,15):
+            saved_params.new_element("Caca" + str(i))
+        cmds.button("Test")
 
         cmds.showWindow(self.win)
 
@@ -92,3 +129,5 @@ class WaveTail:
         cmds.floatSliderGrp(self.base_offset_slider_id, edit=True, value=new_base_offset)
         self.base_offset = new_base_offset
 
+
+WaveTail()
